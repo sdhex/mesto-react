@@ -6,6 +6,7 @@ export default function PopupWithForm({
   onClose,
   children,
   textButton,
+  onSubmit
 }) {
   const className = `popup popup_type_${name} ${isOpen ? 'popup_opened' : ''}`;
 
@@ -23,11 +24,12 @@ export default function PopupWithForm({
           className={`popup__form popup__form_type_${name}`}
           name={name}
           noValidate
+          onSubmit={onSubmit}
         >
           {children}
           <button
             className="popup__button"
-            type="button"
+            type="submit"
             aria-label={textButton}
           >
             {textButton}
