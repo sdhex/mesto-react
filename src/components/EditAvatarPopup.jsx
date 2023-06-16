@@ -1,28 +1,33 @@
-/* eslint-disable react/prop-types */
+/* eslint-disable prefer-destructuring */
 /* eslint-disable react/jsx-no-bind */
+/* eslint-disable react/prop-types */
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
+import useForm from '../hooks/useForm';
+import { AppContext } from '../contexts/AppContext';
 
 export default function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
+  const { values, handleChange, setValues } = useForm({});
   const avatarRef = React.useRef();
+  const isLoading = React.useContext(AppContext).isLoading;
 
   function handleSubmit(e) {
     e.preventDefault();
-    
+
     onUpdateAvatar({
-      avatar: avatarRef.current.value,
-    })
+      avatar: values.avatar,
+    });
   }
 
-    React.useEffect(() => {
-      avatarRef.current.value = "";
-    }, [isOpen])
+  React.useEffect(() => {
+    setValues({ avatar: '' });
+  }, [isOpen, setValues]);
 
   return (
     <PopupWithForm
       name="edit-avatar"
       title="Обновить аватар"
-      textButton="Сохранить"
+      buttonText={isLoading ? 'Сохранение...' : 'Сохранить'}
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
@@ -36,6 +41,7 @@ export default function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
         defaultValue=""
         required
         ref={avatarRef}
+        onChange={handleChange}
       />
       <span id="input-avatar-link-error" className="popup__error" />
     </PopupWithForm>

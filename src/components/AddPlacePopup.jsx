@@ -1,38 +1,35 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-no-bind */
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
+import useForm from '../hooks/useForm';
+import { AppContext } from '../contexts/AppContext';
 
 export default function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
-  const [name, setName] = React.useState('');
-  const [link, setlink] = React.useState('');
+  const { values, handleChange, setValues } = useForm({});
+  const isLoading = React.useContext(AppContext).isLoading;
 
   function handleSubmit(e) {
     e.preventDefault();
     onAddPlace({
-      name,
-      link
+      name: values.cardName,
+      link: values.cardUrl,
     });
   }
 
-  function handleSetName(e) {
-    setName(e.target.value);
-  }
-
-  function handleSetLink(e) {
-    setlink(e.target.value);
-  }
-
   React.useEffect(() => {
-    setName('');
-    setlink('');
-  }, [isOpen]);
+    setValues({
+      name: '',
+      link: '',
+    });
+  }, [isOpen, setValues]);
 
   return (
     <PopupWithForm
       name="add-image"
       title="Новое место"
-      textButton="Сохранить"
+      buttonText={isLoading ? 'Сохранение...' : 'Сохранить'}
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
@@ -40,23 +37,25 @@ export default function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
       <input
         className="popup__input popup__input_type_gallery-title"
         placeholder="Название"
-        name="name"
+        name="cardName"
         type="text"
         required
         minLength="2"
         maxLength="30"
         id="input-gallery-title"
-        onChange={handleSetName}
+        onChange={handleChange}
+        value={values.cardName ?? ''}
       />
       <span id="input-gallery-title-error" className="popup__error" />
       <input
         className="popup__input popup__input_type_gallery-link"
         placeholder="Ссылка на картинку"
-        name="link"
+        name="cardUrl"
         type="url"
         id="input-gallery-link"
         required
-        onChange={handleSetLink}
+        onChange={handleChange}
+        value={values.cardUrl ?? ''}
       />
       <span id="input-gallery-link-error" className="popup__error" />
     </PopupWithForm>
